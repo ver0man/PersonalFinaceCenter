@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import TemplateView
 from .models import *
@@ -6,9 +7,8 @@ from .forms import *
 import pdb
 
 
-# Create your views here.
-
-class Dashboard(TemplateView):
+class Dashboard(LoginRequiredMixin, TemplateView):
+    login_url = 'www.google.com'
     template_name = 'dashboard/dashboard.html'
 
 
@@ -65,9 +65,6 @@ def modify_wallet(request):
         wallet_form = WalletForm(request.POST)
         if wallet_form.is_valid():
             wallet_form.save()
-            # wallet = Wallet(wallet_name=request.POST['name'], wallet_total=request.POST['amount'],
-            #                 wallet_note=request.POST['note'])
-            # wallet.save()
     elif 'delete_wallet' in request.POST:
         wallet = Wallet.objects.get(wallet_name=request.POST['name'])
         if wallet is not None:

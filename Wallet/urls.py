@@ -15,9 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from cashier.welcome.views import *
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
+    url(r'^welcome/', Welcome.as_view(), name='welcome'),
+    url(r'^register/', register, name='register'),
+    url(r'^login/', log_in, name='login'),
+    url(r'^logout/', log_out, name='logout'),
+
 
     url(r'^wallet/', include('cashier.urls', namespace='wallet')),
 ]

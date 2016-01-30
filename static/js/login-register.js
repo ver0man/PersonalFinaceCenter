@@ -6,6 +6,7 @@
  * Web script: http://creative-tim.com
  * 
  */
+
 function showRegisterForm(){
     $('.loginBox').fadeOut('fast',function(){
         $('.registerBox').fadeIn('fast');
@@ -45,18 +46,15 @@ function openRegisterModal(){
 }
 
 function loginAjax(){
-    /*   Remove this comments when moving to server
-    $.post( "/login", function( data ) {
-            if(data == 1){
-                window.location.replace("/home");            
+    //Remove this comments when moving to server
+    var data = {'username':$('#login_username').val(), 'password':$('#login_password').val()};
+    $.post( "/login/", data, function( result ) {
+            if(result['status'] == 'success'){
+                window.location.replace("/wallet/");
             } else {
-                 shakeModal(); 
+                 shakeModal();
             }
         });
-    */
-
-/*   Simulate error message from the server   */
-     shakeModal();
 }
 
 function shakeModal(){

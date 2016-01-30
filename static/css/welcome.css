@@ -278,14 +278,14 @@ a:hover .fa-circle {
     color: #fff;
     text-shadow: 0 1px 3px rgba(0,0,0,.2);
     height: 100%;
-    background: #000 url(../../img/index/5.jpg)  no-repeat center center fixed;
+    background: #000 url(../img/welcome/5.jpg)  no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
 }
 
 .intro2 {
-    background: #000 url(../../img/index/6.jpg)  no-repeat center center fixed;
+    background: #000 url(../img/welcome/6.jpg)  no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -394,7 +394,7 @@ a:hover .fa-circle {
 }
 #about {
     width: 100%;
-    background: url(../../img/index/2.jpg)  no-repeat center center fixed;
+    background: url(../img/welcome/2.jpg)  no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
@@ -431,7 +431,7 @@ a:hover .fa-circle {
 #contact {
     width: 100%;
     color: #fff;
-    background: url(../../img/index/4.jpg) no-repeat center center fixed;
+    background: url(../img/welcome/4.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;

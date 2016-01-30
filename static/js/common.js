@@ -1,6 +1,7 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     // Start csrf protection code
+    // using jQuery
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -16,6 +17,7 @@ $(document).ready(function() {
         }
         return cookieValue;
     }
+
     var csrftoken = getCookie('csrftoken');
 
     function csrfSafeMethod(method) {
@@ -24,7 +26,7 @@ $(document).ready(function() {
     }
 
     $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
+        beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }

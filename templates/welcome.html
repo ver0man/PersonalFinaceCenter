@@ -1,10 +1,268 @@
+{% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Super Wallet</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'css/welcome.css' %}" rel="stylesheet">
+    <link href="{% static 'css/login-register.css' %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!--
+    * LoveHub - Multipurpose Non-Profit Theme
+    * https://wrapbootstrap.com/theme/lovehub-WB0T1J69J
+    * Copyright 1994-2015 ForBetterWeb.com
+    -->
 </head>
-<body>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+<!-- Navigation -->
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                <i class="fa fa-bars fa-2x"></i>
+            </button>
+            <a class="navbar-brand page-scroll" href="#page-top">
+                Super <span class="color">Wallet</span> <i class="fa fa-star"></i>
+            </a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+            <ul class="nav navbar-nav">
+                <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
+                <li>
+                    <a href="#"></a>
+                </li>
+                <li>
+                    {% if user.is_authenticated %}
+                        <a href="/wallet/">My Wallets</a>
+                        <a href="/logout/">Logout</a>
+                    {% else %}
+                        <a data-toggle="modal" href="javascript:void(0)" onclick="openLoginModal();">Log
+                            in/Signup</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- LogIn Modal -->
+<div class="modal fade login" id="loginModal">
+    <div class="modal-dialog login animated">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Login with</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box">
+                    <div class="content">
+                        <div class="social">
+                            <a class="circle github" href="/auth/github">
+                                <i class="fa fa-github fa-fw"></i>
+                            </a>
+                            <a id="google_login" class="circle google" href="/auth/google_oauth2">
+                                <i class="fa fa-google-plus fa-fw"></i>
+                            </a>
+                            <a id="facebook_login" class="circle facebook" href="/auth/facebook">
+                                <i class="fa fa-facebook fa-fw"></i>
+                            </a>
+                        </div>
+                        <div class="division">
+                            <div class="line l"></div>
+                            <span>or</span>
+                            <div class="line r"></div>
+                        </div>
+                        <div class="error"></div>
+                        <div class="form loginBox">
+                            <form method="post" action="/login/" accept-charset="UTF-8"> {% csrf_token %}
+                                <input id="login_username" class="form-control" type="text" placeholder="Username"
+                                       name="login_username">
+                                <input id="login_password" class="form-control" type="password" placeholder="Password"
+                                       name="login_password">
+                                <input class="btn btn-default btn-login" value="Login" onclick="loginAjax()">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="content registerBox" style="display:none;">
+                        <div class="form">
+                            <form method="post" html="{:multipart=>true}" data-remote="true" action="/register/"
+                                  accept-charset="UTF-8"> {% csrf_token %}
+                                <div class="container-fluid">
+                                    <div class="col-xs-6">
+                                        <input id="first_name" name='first_name' class="form-control" type="text"
+                                               placeholder="First Name">
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <input id="last_name" name='last_name' class="form-control" type="text"
+                                               placeholder="Last Name">
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <input id="email" class="form-control" type="email" placeholder="Email"
+                                               name="email">
+                                        <input id="password" class="form-control" type="password" placeholder="Password"
+                                               name="password">
+                                        <input id="password_confirmation" class="form-control" type="password"
+                                               placeholder="Repeat Password" name="password_confirmation">
+                                        <input class="btn btn-default btn-register" type="submit" value="Create account"
+                                               name="commit">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="forgot login-footer">
+                            <span>Looking to
+                                 <a href="javascript: showRegisterForm();">create an account</a>
+                            ?</span>
+                </div>
+                <div class="forgot register-footer" style="display:none">
+                    <span>Already have an account?</span>
+                    <a href="javascript: showLoginForm();">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Intro Header -->
+<header class="intro">
+    <div class="intro-body">
+        <div class="container">
+            <div class="col-md-7">
+                <h1 class="brand-heading">S<span class="color">Wallet</span> <i class="fa fa-star-o"></i></h1>
+                <p class="intro-text">Your personal financial system</p>
+            </div>
+            <div class="col-md-5">
+                <ul class="list-inline lead">
+                    <li>
+                        <a href="#about" class="btn btn-primary btn-lg page-scroll"><i class="fa fa-chevron-down"></i>
+                            WHO WE ARE</a>
+                    </li>
+                    <li>
+                        <a href="#contact" class="btn btn-default btn-lg page-scroll"><i class="fa fa-chevron-down"></i>
+                            CONTACT US</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Countdown -->
+<section id="countdown" class="container-fluid text-center">
+    <h2 class="headerline">Simple Steps</h2>
+    <h4> Easy as 123</h4>
+    <!-- TODO: Add up things -->
+    <p>Add pics/docs here</p>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="container-fluid text-center">
+    <div class="overlay"></div>
+    <div class="col-lg-6 col-lg-offset-3">
+        <h2 class="headerline">Contact</h2>
+        <p>Contact info</p>
+        <h3><i class="fa fa-phone"></i> (123) 456-7890</h3>
+        <ul class="list-inline lead">
+            <li><a href="/"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i
+                    class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li>
+            <li><a href="/"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i
+                    class="fa fa-facebook fa-stack-1x fa-inverse"></i></span></a></li>
+            <li><a href="/"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i
+                    class="fa fa-google-plus fa-stack-1x fa-inverse"></i></span></a></li>
+            <li><a href=""><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i
+                    class="fa fa-envelope fa-stack-1x fa-inverse"></i></span></a></li>
+        </ul>
+        <p><i class="fa fa-map-marker"></i> 2345 Some Ave, New York, NY 23458</p>
+        <p class="text-muted">Copyright &copy; Your Website 2016</p>
+    </div>
+</section>
+
+<!-- jQuery -->
+<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script src="{% static 'js/welcome/jquery.easing.min.js' %}"></script>
+<script src="{% static 'js/welcome/jquery.countdown.min.js' %}"></script>
+<script src="{% static 'js/welcome/smoothscroll.js' %}"></script>
+
+<!-- Header Background Slider -->
+<script src="{% static 'js/welcome/jquery.backstretch.min.js' %}"></script>
+<script type="text/javascript">
+    $(".intro").backstretch([
+        "{% static 'img/welcome/1.jpg' %}"
+        , "{% static 'img/welcome/2.jpg' %}"
+        , "{% static 'img/welcome/3.jpg' %}"
+        , "{% static 'img/welcome/4.jpg' %}"
+        , "{% static 'img/welcome/5.jpg' %}"
+        , "{% static 'img/welcome/6.jpg' %}"
+        , "{% static 'img/welcome/7.jpg' %}"
+    ], {duration: 4000, fade: 1000, centeredX: true, centeredY: true});
+</script>
+
+<!-- Custom Theme JavaScript -->
+<script src="{% static 'js/common.js' %}"></script>
+<script src={% static 'js/welcome/index.js' %}></script>
+<script src={% static 'js/login-register.js' %}></script>
+
+<!--
+Google Analitics
+Demo Purpose Only
+Change UA-XXXXXXX-X to be your site's ID
+ -->
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-1057679-2', 'auto');
+    ga('send', 'pageview');
+</script>
 
 </body>
 </html>
