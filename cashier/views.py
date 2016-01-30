@@ -12,8 +12,12 @@ class Dashboard(TemplateView):
     template_name = 'dashboard/dashboard.html'
 
 
-# Serve data to dashboard, statistics highcharts
 def statistics_data(request):
+    """
+    Serve data to dashboard, statistics highcharts.
+    If total < 0, show it in 0 in the plot.
+    :return: Json of plot data.
+    """
     data, wallets = {}, Wallet.objects.all()
     data['xAxis'], data['income'], data['expense'], data['total'] = [], [], [], []
     for wallet in wallets:
@@ -38,6 +42,9 @@ def contrast_data(request):
 
 
 class GetWallet(TemplateView):
+    """
+    For fetch wallet data and show in color, extended by some ajax code.
+    """
     template_name = 'dashboard/wallet.html'
 
     def get_context_data(self, **kwargs):
@@ -50,13 +57,17 @@ class GetWallet(TemplateView):
 
 
 def modify_wallet(request):
+    """
+    For create, update, or delete wallet.
+    :return: redirect to previous page.
+    """
     if 'add_wallet' in request.POST:
         wallet_form = WalletForm(request.POST)
         if wallet_form.is_valid():
             wallet_form.save()
-        # wallet = Wallet(wallet_name=request.POST['name'], wallet_total=request.POST['amount'],
-        #                 wallet_note=request.POST['note'])
-        # wallet.save()
+            # wallet = Wallet(wallet_name=request.POST['name'], wallet_total=request.POST['amount'],
+            #                 wallet_note=request.POST['note'])
+            # wallet.save()
     elif 'delete_wallet' in request.POST:
         wallet = Wallet.objects.get(wallet_name=request.POST['name'])
         if wallet is not None:
@@ -73,6 +84,9 @@ def modify_wallet(request):
 
 
 def get_wallet(request, wallet_id):
+    """
+    For AJAX query.
+    """
     wallet = Wallet.objects.get(id=wallet_id)
     return JsonResponse({
         'name': wallet.wallet_name,
@@ -82,6 +96,9 @@ def get_wallet(request, wallet_id):
 
 
 class Earn(TemplateView):
+    """
+    For add earning money into wallet.
+    """
     template_name = 'dashboard/earn.html'
 
     def get_context_data(self, **kwargs):
@@ -105,6 +122,11 @@ class Expend(TemplateView):
 
 
 def add_income(request):
+    """
+    Add money. Update the wallet simultaneously.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         wallets = Wallet.objects.all()
         for wallet in wallets:
