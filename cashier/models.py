@@ -1,23 +1,25 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
-class User(models.Model):
-    """
-    For simple user admin.
-    """
-    user_firstname = models.CharField(max_length=20)
-    user_lastname = models.CharField(max_length=20)
-    user_email = models.EmailField(unique=True)
-    user_password = models.CharField(max_length=20)
-    user_tel = models.CharField(max_length=15)
-    user_add_time = models.DateTimeField(auto_now_add=True)
+# class User(models.Model):
+#     """
+#     For simple user admin.
+#     """
+#     user_firstname = models.CharField(max_length=20)
+#     user_lastname = models.CharField(max_length=20)
+#     user_email = models.EmailField(unique=True)
+#     user_password = models.CharField(max_length=20)
+#     user_tel = models.CharField(max_length=15)
+#     user_add_time = models.DateTimeField(auto_now_add=True)
 
 
 class Wallet(models.Model):
     """
     Serve as different types of wallets or repos.
     """
-    wallet_name = models.CharField(max_length=30, unique=True)
+    wallet_person = models.ForeignKey(User, on_delete=models.CASCADE)
+    wallet_name = models.CharField(max_length=30)
     wallet_income = models.FloatField(default=0)
     wallet_expense = models.FloatField(default=0)
     wallet_total = models.FloatField(default=0)

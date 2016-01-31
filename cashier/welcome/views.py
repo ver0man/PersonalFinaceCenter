@@ -33,3 +33,7 @@ def log_in(request):
 def log_out(request):
     logout(request)
     return redirect('/welcome/')
+
+
+class fail(TemplateView):
+    template_name = 'logout.html'

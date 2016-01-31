@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = 'www.google.com'
+LOGIN_URL = '/welcome/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/

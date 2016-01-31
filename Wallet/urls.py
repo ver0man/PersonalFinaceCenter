@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^register/', register, name='register'),
     url(r'^login/', log_in, name='login'),
     url(r'^logout/', log_out, name='logout'),
+    url(r'^login_failed/', fail, name='fail'),
 
 
     url(r'^wallet/', include('cashier.urls', namespace='wallet')),

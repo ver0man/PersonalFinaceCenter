@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import TemplateView
 from .models import *
@@ -8,7 +9,7 @@ import pdb
 
 
 class Dashboard(LoginRequiredMixin, TemplateView):
-    login_url = 'www.google.com'
+    login_url = '/logout/'
     template_name = 'dashboard/dashboard.html'
 
 
@@ -18,7 +19,7 @@ def statistics_data(request):
     If total < 0, show it in 0 in the plot.
     :return: Json of plot data.
     """
-    data, wallets = {}, Wallet.objects.all()
+    data, wallets = {}, Wallet.objects.filter(wallet_person=request.user)[:]
     data['xAxis'], data['income'], data['expense'], data['total'] = [], [], [], []
     for wallet in wallets:
         data['xAxis'].append(wallet.wallet_name)
@@ -30,7 +31,7 @@ def statistics_data(request):
 
 
 def contrast_data(request):
-    data, wallets = {}, Wallet.objects.all()
+    data, wallets = {}, Wallet.objects.filter(wallet_person=request.user)[:]
     data['total'] = []
     total = sum([wallet.wallet_total if wallet.wallet_total > 0 else 0 for wallet in wallets])
     for wallet in wallets:
@@ -52,7 +53,8 @@ class GetWallet(TemplateView):
         context = super(GetWallet, self).get_context_data(**kwargs)
 
         # Add in a QuerySet of all the wallets
-        context['wallet_list'] = Wallet.objects.order_by('wallet_name')[:]
+        context['user_id'] = self.request.user.id
+        context['wallet_list'] = Wallet.objects.filter(wallet_person=self.request.user).order_by('wallet_name')[:]
         return context
 
 
@@ -61,21 +63,18 @@ def modify_wallet(request):
     For create, update, or delete wallet.
     :return: redirect to previous page.
     """
-    if 'add_wallet' in request.POST:
-        wallet_form = WalletForm(request.POST)
-        if wallet_form.is_valid():
+    wallet_form = WalletForm(request.POST)
+    if wallet_form.is_valid():
+        if 'add_wallet' in request.POST:
             wallet_form.save()
-    elif 'delete_wallet' in request.POST:
-        wallet = Wallet.objects.get(wallet_name=request.POST['name'])
-        if wallet is not None:
+        elif 'delete_wallet' in request.POST:
+            wallet = Wallet.objects.filter(wallet_person=request.user, wallet_name=request.POST['wallet_name'])
             wallet.delete()
-    elif 'update_wallet' in request.POST:
-        wallet = Wallet.objects.get(wallet_name=request.POST['name'])
-        if wallet is not None:
-            wallet.wallet_total = request.POST['amount']
-            wallet.wallet_note = request.POST['note']
+        elif 'update_wallet' in request.POST:
+            wallet = wallet_form.save(commit=False)
+            wallet.wallet_total = request.POST['wallet_total']
+            wallet.wallet_note = request.POST['wallet_note']
             wallet.save()
-        pass
 
     return redirect('/wallet/wallet/')
 
@@ -92,7 +91,7 @@ def get_wallet(request, wallet_id):
     })
 
 
-class Earn(TemplateView):
+class Earn(LoginRequiredMixin, TemplateView):
     """
     For add earning money into wallet.
     """
@@ -103,18 +102,18 @@ class Earn(TemplateView):
         context = super(Earn, self).get_context_data(**kwargs)
 
         # Add in a QuerySet of all the wallets
-        context['wallet_list'] = Wallet.objects.order_by('wallet_name')[:]
+        context['wallet_list'] = Wallet.objects.filter(wallet_person=self.request.user).order_by('wallet_name')[:]
         return context
 
 
-class Expend(TemplateView):
+class Expend(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/expend.html'
 
     def get_context_data(self, **kwargs):
         context = super(Expend, self).get_context_data(**kwargs)
 
         # Same QuerySet
-        context['wallet_list'] = Wallet.objects.order_by('wallet_name')[:]
+        context['wallet_list'] = Wallet.objects.filter(wallet_person=self.request.user).order_by('wallet_name')[:]
         return context
 
 
@@ -125,7 +124,7 @@ def add_income(request):
     :return:
     """
     if request.method == 'POST':
-        wallets = Wallet.objects.all()
+        wallets = Wallet.objects.filter(wallet_person=request.user)[:]
         for wallet in wallets:
             post_amount_name = wallet.wallet_name + "amount"
             post_amount = request.POST[post_amount_name]
@@ -146,7 +145,7 @@ def add_income(request):
 
 def add_expense(request):
     if request.method == 'POST':
-        wallets = Wallet.objects.all()
+        wallets = Wallet.objects.filter(wallet_person=request.user)[:]
         for wallet in wallets:
             post_amount_name = wallet.wallet_name + "amount"
             post_amount = request.POST[post_amount_name]
@@ -170,7 +169,13 @@ class Detail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(Detail, self).get_context_data(**kwargs)
 
-        context['income_list'] = Income.objects.order_by('-income_time')[:]
-        context['expense_list'] = Expense.objects.order_by('-expense_time')[:]
+        wallets = Wallet.objects.filter(wallet_person=self.request.user)[:]
+        income_list, expense_list = [], []
+        for wallet in wallets:
+            income_list.extend(Income.objects.filter(income_wallet=wallet)[:])
+            expense_list.extend(Expense.objects.filter(expense_wallet=wallet)[:])
+
+        context['income_list'] = income_list
+        context['expense_list'] = expense_list
 
         return context

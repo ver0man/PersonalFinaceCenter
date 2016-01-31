@@ -6,7 +6,7 @@ class WalletForm(ModelForm):
 
     class Meta:
         model = Wallet
-        fields = ['wallet_name', 'wallet_total', 'wallet_note']
+        fields = ['wallet_person', 'wallet_name', 'wallet_total', 'wallet_note']
 
 
 class IncomeForm(ModelForm):
