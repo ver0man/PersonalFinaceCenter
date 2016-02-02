@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.generic import TemplateView
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from cashier.models import Client
 import pdb
 
 
@@ -12,10 +13,15 @@ class Welcome(TemplateView):
 
 def register(request):
     if request.method == 'POST':
-        user = User.objects.create_user(username=request.POST['email'], email=request.POST['email'],
-                                        password=request.POST['password'],
-                                        first_name=request.POST['first_name'], last_name=request.POST['last_name'])
-        user.save()
+        cur_user = User.objects.create_user(username=request.POST['email'], email=request.POST['email'],
+                                            password=request.POST['password'],
+                                            first_name=request.POST['first_name'], last_name=request.POST['last_name'])
+
+        cur_user.save()
+
+        client = Client(user=cur_user, tel=request.POST['tel'])
+        client.save()
+
         return redirect('/welcome/')
 
 
